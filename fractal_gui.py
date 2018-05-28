@@ -271,6 +271,8 @@ class FractalGUI:
         self.__input_y_min.setValue(self.__y_min)
         self.__input_y_max.setValue(self.__y_max)
 
+        self.render_engine()
+
     def set_start(self):
         self.__start_x_min = copy.deepcopy(self.__x_min)
         self.__start_x_max = copy.deepcopy(self.__x_max)
