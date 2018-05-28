@@ -167,6 +167,8 @@ class FractalGUI:
         win.show()
         win2.show()
 
+        self.render()
+
         # Note: PyQtGraph is prone to crashing on exit
         # (mysterious segfaults etc., especially when used along with other libraries)
         # See this for documentation:
