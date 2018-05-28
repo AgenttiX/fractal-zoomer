@@ -16,7 +16,7 @@ grid_dim = (32, 16)
 
 
 # CUDA core functions
-# (one instance per CUDA core)
+# (one instance <-> one CUDA core <-> one fractal pixel)
 
 @cuda.jit(device=True)
 def frac_mandel(x, y, max_iter):
@@ -56,6 +56,23 @@ def frac_julia(x, y, c, max_iter):
         if z.real * z.real + z.imag * z.imag >= 4:
             return i
     return max_iter
+
+
+@cuda.jit(device=True)
+def frac_julia_color(x, y, c, max_iter):
+    z = complex(x, y)
+    for i in range(max_iter):
+        z = z * z + c
+        if z.real * z.real + z.imag * z.imag >= 4:
+            # Continuous indexing for smoother coloring
+            # http://www.paridebroggi.com/2015/05/fractal-continuous-coloring.html
+            ind = i + 1 - (math.log(2.0) / abs(z)) / math.log(2.0)
+            return \
+                math.sin(0.016 * ind + 4) * 230 + 25, \
+                math.sin(0.013 * ind + 2) * 230 + 25, \
+                math.sin(0.01 * ind + 1) * 230 + 25
+
+    return 0, 0, 0
 
 
 @cuda.jit(device=True)
@@ -102,7 +119,6 @@ def kernel_mandel_color(x_min, x_max, y_min, y_max, image, max_iter):
     grid_x = cuda.gridDim.x * cuda.blockDim.x
     grid_y = cuda.gridDim.y * cuda.blockDim.y
 
-
     for x in range(start_x, width, grid_x):
         real = x_min + x * pixel_size_x
         for y in range(start_y, height, grid_y):
@@ -127,6 +143,25 @@ def kernel_julia(x_min, x_max, y_min, y_max, image, max_iter, c):
         for y in range(start_y, height, grid_y):
             imag = y_min + y * pixel_size_y
             image[y, x] = frac_julia(real, imag, c, max_iter)
+
+
+@cuda.jit
+def kernel_julia(x_min, x_max, y_min, y_max, image, max_iter, c):
+    height = image.shape[0]
+    width = image.shape[1]
+
+    pixel_size_x = (x_max - x_min) / width
+    pixel_size_y = (y_max - y_min) / height
+
+    start_x, start_y = cuda.grid(2)
+    grid_x = cuda.gridDim.x * cuda.blockDim.x
+    grid_y = cuda.gridDim.y * cuda.blockDim.y
+
+    for x in range(start_x, width, grid_x):
+        real = x_min + x * pixel_size_x
+        for y in range(start_y, height, grid_y):
+            imag = y_min + y * pixel_size_y
+            image[y, x, :] = frac_julia_color(real, imag, c, max_iter)
 
 
 @cuda.jit
@@ -182,6 +217,21 @@ def julia(
         max_iter: int,
         c: complex):
     image = np.zeros(resolution, dtype=np.uint32)
+    device_image = cuda.to_device(image)
+    kernel_julia[grid_dim, block_dim](x_min, x_max, y_min, y_max, device_image, max_iter, c)
+    device_image.to_host()
+    return image
+
+
+def julia_color(
+        x_min: float,
+        x_max: float,
+        y_min: float,
+        y_max: float,
+        resolution: tp.Tuple[int, int],
+        max_iter: int,
+        c: complex):
+    image = np.zeros((resolution[0], resolution[1], 3), dtype=np.uint8)
     device_image = cuda.to_device(image)
     kernel_julia[grid_dim, block_dim](x_min, x_max, y_min, y_max, device_image, max_iter, c)
     device_image.to_host()

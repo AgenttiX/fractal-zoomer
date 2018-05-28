@@ -97,9 +97,10 @@ class FractalGUI:
         self.__image = None
 
         self.__input_frac = QtWidgets.QComboBox()
-        self.__input_frac.addItem("Mandelbrot", "mandel")
         self.__input_frac.addItem("Mandelbrot colored", "mandel-color")
-        self.__input_frac.addItem("Julia", "julia")
+        self.__input_frac.addItem("Mandelbrot grayscale", "mandel")
+        self.__input_frac.addItem("Julia colored", "julia-color")
+        self.__input_frac.addItem("Julia grayscale", "julia")
         self.__input_frac.addItem("Sierpinski carpet", "carpet")
         win2_layout.addWidget(self.__input_frac, 0, 1)
 
@@ -222,6 +223,17 @@ class FractalGUI:
                 self.__iter_max,
                 complex(self.__c_real, self.__c_imag)
             )
+        elif selection == "julia-color":
+            self.__image = frac.julia_color(
+                self.__x_min,
+                self.__x_max,
+                self.__y_min,
+                self.__y_max,
+                (self.__res_y, self.__res_x),
+                self.__iter_max,
+                complex(self.__c_real, self.__c_imag)
+            )
+            color = True
         elif selection == "carpet":
             self.__image = frac.carpet(self.__res_x)
         else:
