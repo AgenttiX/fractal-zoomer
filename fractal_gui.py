@@ -306,7 +306,32 @@ class FractalGUI:
         print("Drawing time", time.process_time() - drawing_start_time)
 
     def zoom(self):
-        pass
+        """
+        Render the fractal as zoomed in the GUI
+        :return: -
+        """
+        rect = self.__imv.getView().viewRect()
+
+        width = self.__x_max - self.__x_min
+        height = self.__y_max - self.__y_min
+
+        zoom_factor = rect.width() / self.__res_x
+
+        px_center = rect.center()
+        center_x = self.__x_min + px_center.x() / self.__res_x * width
+        center_y = self.__y_min + px_center.y() / self.__res_y * height
+
+        self.__x_max = center_x + zoom_factor * width * 0.5
+        self.__x_min = center_x - zoom_factor * width * 0.5
+        self.__y_max = center_y + zoom_factor * height * 0.5
+        self.__y_min = center_y - zoom_factor * height * 0.5
+
+        self.__input_x_max.setValue(self.__x_max)
+        self.__input_x_min.setValue(self.__x_min)
+        self.__input_y_max.setValue(self.__y_max)
+        self.__input_y_min.setValue(self.__y_min)
+
+        self.render()
 
     def save(self, filename: str = None):
         start_time = time.process_time()
