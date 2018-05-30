@@ -146,7 +146,7 @@ def kernel_julia(x_min, x_max, y_min, y_max, image, max_iter, c):
 
 
 @cuda.jit
-def kernel_julia(x_min, x_max, y_min, y_max, image, max_iter, c):
+def kernel_julia_color(x_min, x_max, y_min, y_max, image, max_iter, c):
     height = image.shape[0]
     width = image.shape[1]
 
@@ -233,7 +233,7 @@ def julia_color(
         c: complex):
     image = np.zeros((resolution[0], resolution[1], 3), dtype=np.uint8)
     device_image = cuda.to_device(image)
-    kernel_julia[grid_dim, block_dim](x_min, x_max, y_min, y_max, device_image, max_iter, c)
+    kernel_julia_color[grid_dim, block_dim](x_min, x_max, y_min, y_max, device_image, max_iter, c)
     device_image.to_host()
     return image
 
