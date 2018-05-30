@@ -87,6 +87,8 @@ def frac_carpet(x, y):
 
 # CUDA kernels
 # These initialize the CUDA cores for computation
+# Based on
+# https://github.com/harrism/numba_examples/blob/master/mandelbrot_numba.ipynb
 
 @cuda.jit
 def kernel_mandel(x_min, x_max, y_min, y_max, image, max_iter):
@@ -250,6 +252,12 @@ def carpet(size: int):
 
 @numba.jit
 def color(image: np.array, max_iter: int=0):
+    """
+    Color a fractal on CPU
+    :param image: 2D Numpy array
+    :param max_iter: maximum iteration used in the fractal rendering (needed to set these as black)
+    :return: a colored fractal - Numpy 3D array (RGB 0-255)
+    """
 
     # Hervanta constants for trigonometric functions taken from
     # http://www.paridebroggi.com/2015/05/fractal-continuous-coloring.html

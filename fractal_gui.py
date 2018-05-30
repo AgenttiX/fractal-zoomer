@@ -34,7 +34,7 @@ def save_process(q: mp.JoinableQueue):
     """
     while True:
         start_time = time.process_time()
-        path, image = q.get()
+        path, image = q.get()   # This call is blocking, so the while loop doesn't run on its own
         print("Saving", path)
         # save_accel(path, image)
         scipy.misc.imsave(path, image)
@@ -43,8 +43,19 @@ def save_process(q: mp.JoinableQueue):
 
 
 class FractalGUI:
-    def_res_x = 4096
-    def_res_y = 2160
+    """
+    The GUI class of the fractal software
+    """
+
+    # Default parameters
+
+    def_res_x = 1920
+    def_res_y = 1080
+
+    # The resulting 4K video would be highly resource intensive to play
+    # def_res_x = 3840
+    # def_res_y = 2160
+
     def_x_min = -2.0
     def_x_max = 1.0
     def_y_min = -1.0
@@ -61,10 +72,12 @@ class FractalGUI:
         if not os.path.exists(FractalGUI.def_path):
             os.mkdir(FractalGUI.def_path)
 
+        # Create workers for image saving
         mp.set_start_method("spawn")
         self.__save_queue = mp.JoinableQueue()
         self.__save_pool = mp.Pool(initializer=save_process, initargs=(self.__save_queue,))
 
+        # Initialise PyQtGraph
         app = pg.mkQApp()
         pg.setConfigOptions(antialias=True)
 
@@ -205,9 +218,11 @@ class FractalGUI:
         self.__animeButton.clicked.connect(self.animate)
         win2_layout.addWidget(self.__animeButton, 3, 2)
 
+        """
         self.__testButton = QtWidgets.QPushButton("Test")
         self.__testButton.clicked.connect(self.test)
         win2_layout.addWidget(self.__testButton, 3, 3)
+        """
 
         self.__renderLabel = QtWidgets.QLabel()
         self.__renderLabel.setText("")
@@ -220,12 +235,19 @@ class FractalGUI:
 
         # Note: PyQtGraph is prone to crashing on exit
         # (mysterious segfaults etc., especially when used along with other libraries)
-        # See this for documentation:
+        # This is not caused by improper usage but bugs in the library itself
+        #  Please see this for documentation:
         # http://www.pyqtgraph.org/documentation/functions.html#pyqtgraph.exit
         app.exec_()
+
+        # This can prevent some of the errors
         # pg.exit()
 
     def render(self):
+        """
+        Render a new frame based on the GUI parameters
+        :return: -
+        """
         self.__res_x = self.__input_res_x.value()
         self.__res_y = self.__input_res_y.value()
         self.__x_min = self.__input_x_min.value()
@@ -239,6 +261,11 @@ class FractalGUI:
         self.render_engine()
 
     def render_engine(self):
+        """
+        Render a new frame without asking the GUI for all the parameters
+        :return: -
+        """
+
         selection = self.__input_frac.currentData()
 
         color = False
@@ -334,6 +361,11 @@ class FractalGUI:
         self.render()
 
     def save(self, filename: str = None):
+        """
+        Save the fractal to a file
+        :param filename: file name
+        :return: -
+        """
         start_time = time.process_time()
         if type(filename) is not str:
             save_accel(os.path.join(FractalGUI.def_path, "test.png"), self.__image)
@@ -342,6 +374,10 @@ class FractalGUI:
         print("Saving time", time.process_time() - start_time)
 
     def reset(self):
+        """
+        Reset the fractal to default parameters
+        :return: -
+        """
         self.__res_x = FractalGUI.def_res_x
         self.__res_y = FractalGUI.def_res_y
         self.__x_min = FractalGUI.def_x_min
@@ -362,6 +398,10 @@ class FractalGUI:
         self.render_engine()
 
     def set_start(self):
+        """
+        Set parameters for the first frame of the animation
+        :return: -
+        """
         self.__start_x_min = copy.deepcopy(self.__x_min)
         self.__start_x_max = copy.deepcopy(self.__x_max)
         self.__start_y_min = copy.deepcopy(self.__y_min)
@@ -371,6 +411,10 @@ class FractalGUI:
         self.__start_iter_max = copy.deepcopy(self.__iter_max)
     
     def set_end(self):
+        """
+        Set parameters for the last frame of the animation
+        :return: -
+        """
         self.__end_x_min = copy.deepcopy(self.__x_min)
         self.__end_x_max = copy.deepcopy(self.__x_max)
         self.__end_y_min = copy.deepcopy(self.__y_min)
@@ -380,6 +424,10 @@ class FractalGUI:
         self.__end_iter_max = copy.deepcopy(self.__iter_max)
 
     def animate(self):
+        """
+        Render and save the animation
+        :return: -
+        """
 
         cannot_start = False
         if self.__start_x_max is None:
@@ -452,8 +500,10 @@ class FractalGUI:
         print("Total animation time:", total_time)
         print("Time per frame", total_time / frames)
 
+    """
     def test(self):
         print(self.__imv.getView().viewRect())
+    """
 
     def print(self, text: str):
         self.__renderLabel.setText(text)
