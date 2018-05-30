@@ -380,6 +380,18 @@ class FractalGUI:
         self.__end_iter_max = copy.deepcopy(self.__iter_max)
 
     def animate(self):
+
+        cannot_start = False
+        if self.__start_x_max is None:
+            print("Start frame has not been set")
+            cannot_start = True
+        if self.__end_x_max is None:
+            print("End frame has not been set")
+            cannot_start = True
+
+        if cannot_start:
+            return
+
         self.print("Animating")
         time.sleep(0.1)
         start_time = time.process_time()
