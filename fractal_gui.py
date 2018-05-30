@@ -328,7 +328,7 @@ class FractalGUI:
         self.__iter_max = FractalGUI.def_iter
 
         self.__input_res_x.setValue(self.__res_x)
-        self.__input_res_x.setValue(self.__res_y)
+        self.__input_res_y.setValue(self.__res_y)
         self.__input_x_min.setValue(self.__x_min)
         self.__input_x_max.setValue(self.__x_max)
         self.__input_y_min.setValue(self.__y_min)
