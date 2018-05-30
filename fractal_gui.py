@@ -138,7 +138,8 @@ class FractalGUI:
         self.__input_frac.addItem("Mandelbrot grayscale", "mandel")
         self.__input_frac.addItem("Julia colored", "julia-color")
         self.__input_frac.addItem("Julia grayscale", "julia")
-        self.__input_frac.addItem("Sierpinski carpet", "carpet")
+        # This works but would require different parameter entries in the GUI
+        # self.__input_frac.addItem("Sierpinski carpet", "carpet")
         win2_layout.addWidget(self.__input_frac, 0, 1)
 
         self.__input_res_x = pg.SpinBox(value=self.__res_x, int=True, dec=True, minStep=1, step=1, min=10)
