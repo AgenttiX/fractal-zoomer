@@ -11,7 +11,6 @@ import numba
 import numpy as np
 import scipy.misc
 
-import copy
 import glob
 import multiprocessing as mp
 import os
