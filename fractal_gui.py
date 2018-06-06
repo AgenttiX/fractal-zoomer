@@ -402,26 +402,26 @@ class FractalGUI:
         Set parameters for the first frame of the animation
         :return: -
         """
-        self.__start_x_min = copy.deepcopy(self.__x_min)
-        self.__start_x_max = copy.deepcopy(self.__x_max)
-        self.__start_y_min = copy.deepcopy(self.__y_min)
-        self.__start_y_max = copy.deepcopy(self.__y_max)
-        self.__start_c_real = copy.deepcopy(self.__c_real)
-        self.__start_c_imag = copy.deepcopy(self.__c_imag)
-        self.__start_iter_max = copy.deepcopy(self.__iter_max)
+        self.__start_x_min = self.__x_min
+        self.__start_x_max = self.__x_max
+        self.__start_y_min = self.__y_min
+        self.__start_y_max = self.__y_max
+        self.__start_c_real = self.__c_real
+        self.__start_c_imag = self.__c_imag
+        self.__start_iter_max = self.__iter_max
     
     def set_end(self):
         """
         Set parameters for the last frame of the animation
         :return: -
         """
-        self.__end_x_min = copy.deepcopy(self.__x_min)
-        self.__end_x_max = copy.deepcopy(self.__x_max)
-        self.__end_y_min = copy.deepcopy(self.__y_min)
-        self.__end_y_max = copy.deepcopy(self.__y_max)
-        self.__end_c_real = copy.deepcopy(self.__c_real)
-        self.__end_c_imag = copy.deepcopy(self.__c_imag)
-        self.__end_iter_max = copy.deepcopy(self.__iter_max)
+        self.__end_x_min = self.__x_min
+        self.__end_x_max = self.__x_max
+        self.__end_y_min = self.__y_min
+        self.__end_y_max = self.__y_max
+        self.__end_c_real = self.__c_real
+        self.__end_c_imag = self.__c_imag
+        self.__end_iter_max = self.__iter_max
 
     def animate(self):
         """
