@@ -37,7 +37,7 @@ def save_process(q: mp.JoinableQueue):
         path, image = q.get()   # This call is blocking, so the while loop doesn't run on its own
         print("Saving", path)
         # save_accel(path, image)
-        scipy.misc.imsave(path, image)
+        scipy.misc.imsave(path, np.flipud(image))
         q.task_done()
         print("Saving time", time.process_time() - start_time)
 
@@ -144,7 +144,7 @@ class FractalGUI:
         self.__end_c_imag = None
         self.__end_iter_max = None
 
-        self.__image = None
+        self.__image: np.ndarray = None
 
         self.__input_frac = QtWidgets.QComboBox()
         self.__input_frac.addItem("Mandelbrot colored", "mandel-color")
@@ -368,9 +368,9 @@ class FractalGUI:
         """
         start_time = time.process_time()
         if type(filename) is not str:
-            save_accel(os.path.join(FractalGUI.def_path, "test.png"), self.__image)
+            save_accel(os.path.join(FractalGUI.def_path, "test.png"), np.flipud(self.__image))
         else:
-            save_accel(os.path.join(FractalGUI.def_path, filename) + ".png", self.__image)
+            save_accel(os.path.join(FractalGUI.def_path, filename) + ".png", np.flipud(self.__image))
         print("Saving time", time.process_time() - start_time)
 
     def reset(self):
