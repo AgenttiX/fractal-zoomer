@@ -426,15 +426,15 @@ class FractalGUI:
         :return: -
         """
 
-        cannot_start = False
+        can_start = True
         if self.__start_x_max is None:
-            print("Start frame has not been set")
-            cannot_start = True
+            self.print("Start frame has not been set")
+            can_start = False
         if self.__end_x_max is None:
-            print("End frame has not been set")
-            cannot_start = True
+            self.print("End frame has not been set")
+            can_start = False
 
-        if cannot_start:
+        if not can_start:
             return
 
         self.print("Animating")
