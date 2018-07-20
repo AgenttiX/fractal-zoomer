@@ -195,62 +195,40 @@ def kernel_carpet(image):
 # Wrappers
 # These wrap the CUDA kernels for simpler access from normal Python code
 
-def mandel(
-        x_min: float,
-        x_max: float,
-        y_min: float,
-        y_max: float,
-        resolution: tp.Tuple[int, int],
-        max_iter: int):
-    image = np.zeros(resolution, dtype=np.uint32)
-    device_image = cuda.to_device(image)
-    kernel_mandel[grid_dim, block_dim](x_min, x_max, y_min, y_max, device_image, max_iter)
-    device_image.to_host()
-    return image
+
+def pythonize(kernel_func, has_color: bool, has_c: bool):
+    def compute(x_min: float,
+                x_max: float,
+                y_min: float,
+                y_max: float,
+                resolution: tp.Tuple[int, int],
+                max_iter: int,
+                c: complex=None):
+
+        if has_color:
+            image = np.zeros((resolution[0], resolution[1], 3), dtype=np.uint8)
+        else:
+            image = np.zeros(resolution, dtype=np.uint32)
+
+        device_image = cuda.to_device(image)
+
+        if has_c:
+            if c is None:
+                raise ValueError("c value not provided")
+            else:
+                kernel_func[grid_dim, block_dim](x_min, x_max, y_min, y_max, device_image, max_iter, c)
+        else:
+            kernel_func[grid_dim, block_dim](x_min, x_max, y_min, y_max, device_image, max_iter)
+
+        device_image.to_host()
+        return image
+    return compute
 
 
-def mandel_color(
-        x_min: float,
-        x_max: float,
-        y_min: float,
-        y_max: float,
-        resolution: tp.Tuple[int, int],
-        max_iter: int):
-    image = np.zeros((resolution[0], resolution[1], 3), dtype=np.uint8)
-    device_image = cuda.to_device(image)
-    kernel_mandel_color[grid_dim, block_dim](x_min, x_max, y_min, y_max, device_image, max_iter)
-    device_image.to_host()
-    return image
-
-
-def julia(
-        x_min: float,
-        x_max: float,
-        y_min: float,
-        y_max: float,
-        resolution: tp.Tuple[int, int],
-        max_iter: int,
-        c: complex):
-    image = np.zeros(resolution, dtype=np.uint32)
-    device_image = cuda.to_device(image)
-    kernel_julia[grid_dim, block_dim](x_min, x_max, y_min, y_max, device_image, max_iter, c)
-    device_image.to_host()
-    return image
-
-
-def julia_color(
-        x_min: float,
-        x_max: float,
-        y_min: float,
-        y_max: float,
-        resolution: tp.Tuple[int, int],
-        max_iter: int,
-        c: complex):
-    image = np.zeros((resolution[0], resolution[1], 3), dtype=np.uint8)
-    device_image = cuda.to_device(image)
-    kernel_julia_color[grid_dim, block_dim](x_min, x_max, y_min, y_max, device_image, max_iter, c)
-    device_image.to_host()
-    return image
+mandel = pythonize(kernel_mandel, has_color=False, has_c=False)
+mandel_color = pythonize(kernel_mandel_color, has_color=True, has_c=False)
+julia = pythonize(kernel_julia, has_color=False, has_c=True)
+julia_color = pythonize(kernel_julia_color, has_color=True, has_c=True)
 
 
 def carpet(size: int):
