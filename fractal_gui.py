@@ -217,11 +217,9 @@ class FractalGUI:
         self.__animeButton.clicked.connect(self.animate)
         win2_layout.addWidget(self.__animeButton, 3, 2)
 
-        """
-        self.__testButton = QtWidgets.QPushButton("Test")
-        self.__testButton.clicked.connect(self.test)
-        win2_layout.addWidget(self.__testButton, 3, 3)
-        """
+        # self.__testButton = QtWidgets.QPushButton("Test")
+        # self.__testButton.clicked.connect(self.test)
+        # win2_layout.addWidget(self.__testButton, 3, 3)
 
         self.__renderLabel = QtWidgets.QLabel()
         self.__renderLabel.setText("")
@@ -499,10 +497,8 @@ class FractalGUI:
         print("Total animation time:", total_time)
         print("Time per frame", total_time / frames)
 
-    """
-    def test(self):
-        print(self.__imv.getView().viewRect())
-    """
+    # def test(self):
+    #     print(self.__imv.getView().viewRect())
 
     def print(self, text: str):
         self.__renderLabel.setText(text)
