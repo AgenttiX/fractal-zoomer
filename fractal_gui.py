@@ -244,7 +244,7 @@ class FractalGUI:
 
     def render(self):
         """
-        Render a new frame based on the GUI parameters
+        Render a new frame based on the GUI parameters. Uses render_engine() for the actual work.
         :return: -
         """
         self.__res_x = self.__input_res_x.value()
@@ -261,7 +261,7 @@ class FractalGUI:
 
     def render_engine(self):
         """
-        Render a new frame without asking the GUI for all the parameters
+        Render a new frame without updating parameter values from the GUI
         :return: -
         """
 

@@ -248,6 +248,8 @@ def color(image: np.array, max_iter: int=0):
     :param image: 2D Numpy array
     :param max_iter: maximum iteration used in the fractal rendering (needed to set these as black)
     :return: a colored fractal - Numpy 3D array (RGB 0-255)
+
+    The same functionality can be implemented in CUDA kernels for faster coloring
     """
 
     # Hervanta constants for trigonometric functions taken from
