@@ -391,6 +391,9 @@ class FractalGUI:
         self.__input_x_max.setValue(self.__x_max)
         self.__input_y_min.setValue(self.__y_min)
         self.__input_y_max.setValue(self.__y_max)
+        self.__input_c_real.setValue(self.__c_real)
+        self.__input_c_imag.setValue(self.__c_imag)
+        self.__input_iter.setValue(self.__iter_max)
 
         self.render_engine()
 
