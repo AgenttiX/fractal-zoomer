@@ -35,24 +35,21 @@ def frac_mandel(x, y, max_iter):
 def frac_mandel_color(x, y, max_iter):
     c = complex(x, y)
     z = 0.0j
-    esc = False     # For determining whether the fractal escaped the value range in the iteration range
 
     for i in range(max_iter):
         z = z * z + c
         if z.real * z.real + z.imag * z.imag >= 4:
-            esc = True
             break
-
-    if esc:
-        # Continuous indexing for smoother coloring
-        # http://www.paridebroggi.com/2015/05/fractal-continuous-coloring.html
-        ind = i + 1 - (math.log(2.0) / abs(z)) / math.log(2.0)
-        return \
-            math.sin(0.016 * ind + 4) * 230 + 25, \
-            math.sin(0.013 * ind + 2) * 230 + 25, \
-            math.sin(0.01  * ind + 1) * 230 + 25
     else:
         return 0, 0, 0
+
+    # Continuous indexing for smoother coloring
+    # http://www.paridebroggi.com/2015/05/fractal-continuous-coloring.html
+    ind = i + 1 - (math.log(2.0) / abs(z)) / math.log(2.0)
+    return \
+        math.sin(0.016 * ind + 4) * 230 + 25, \
+        math.sin(0.013 * ind + 2) * 230 + 25, \
+        math.sin(0.01  * ind + 1) * 230 + 25
 
 
 @cuda.jit(device=True)
@@ -68,24 +65,21 @@ def frac_julia(x, y, c, max_iter):
 @cuda.jit(device=True)
 def frac_julia_color(x, y, c, max_iter):
     z = complex(x, y)
-    esc = False     # For determining whether the fractal escaped the value range in the iteration range
 
     for i in range(max_iter):
         z = z * z + c
         if z.real * z.real + z.imag * z.imag >= 4:
-            esc = True
             break
-
-    if esc:
-        # Continuous indexing for smoother coloring
-        # http://www.paridebroggi.com/2015/05/fractal-continuous-coloring.html
-        ind = i + 1 - (math.log(2.0) / abs(z)) / math.log(2.0)
-        return \
-            math.sin(0.016 * ind + 4) * 230 + 25, \
-            math.sin(0.013 * ind + 2) * 230 + 25, \
-            math.sin(0.01 * ind + 1) * 230 + 25
     else:
         return 0, 0, 0
+
+    # Continuous indexing for smoother coloring
+    # http://www.paridebroggi.com/2015/05/fractal-continuous-coloring.html
+    ind = i + 1 - (math.log(2.0) / abs(z)) / math.log(2.0)
+    return \
+        math.sin(0.016 * ind + 4) * 230 + 25, \
+        math.sin(0.013 * ind + 2) * 230 + 25, \
+        math.sin(0.01 * ind + 1) * 230 + 25
 
 
 @cuda.jit(device=True)
