@@ -12,6 +12,7 @@ import fractal_core as frac
 import pyqtgraph as pg
 from pyqtgraph.Qt import QtWidgets
 
+# import imageio
 import numba
 import numpy as np
 import scipy.misc
@@ -26,6 +27,10 @@ import time
 
 # An attempt to speed up the PNG saving
 # (The saving is parallelized below, so the nogil is pretty much unnecessary)
+# TODO: test and enable this
+# save_accel = numba.jit(imageio.imwrite, nogil=True)
+# The imsave function has been removed in SciPy 1.2.0
+# https://stackoverflow.com/questions/49319841/where-is-imsave-in-scipy-1-0-0
 save_accel = numba.jit(scipy.misc.imsave, nogil=True)
 
 
