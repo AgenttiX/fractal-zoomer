@@ -2,7 +2,9 @@
 # for Tampere University of Technology course
 # RAK-19006 Python 3 for scientific computing
 
-# TODO: Test with Numba 0.53.0 whether this CUDA 11.2 compatibility issue has been fixed
+# TODO: Numba is broken with CUDA 11.2 until Numba 0.53.0
+# TODO: Test with 0.53.0 whether this has been fixed
+# The produced error is:
 # numba.cuda.cudadrv.error.NvvmError: Failed to compile
 # <unnamed> (54, 19): parse expected comma after load's type
 # NVVM_ERROR_COMPILATION

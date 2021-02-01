@@ -1,5 +1,6 @@
 # imageio
 # Numba versions older than 0.53.0 don't work with CUDA 11.2
+# https://github.com/numba/numba/pull/6661
 # https://gitter.im/numba/numba?at=5fdb12b26800ee4013441e33
 numba>=0.33.0
 numpy>=1.12.1
