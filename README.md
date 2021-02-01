@@ -1,4 +1,6 @@
 # Fractal zoomer
+![CI](https://github.com/AgenttiX/fractal-zoomer/workflows/CI/badge.svg)
+
 CUDA-accelerated fractal zoomer with Numba.
 This was my final project for the
 [Tampere University of Technology](https://en.wikipedia.org/wiki/Tampere_University_of_Technology)
