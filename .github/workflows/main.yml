@@ -21,7 +21,7 @@ jobs:
     - name: Install requirements
       run: |
         pip --cache-dir=.pip install --upgrade pip
-        pip --cache-dir=.pip install pylint
+        pip --cache-dir=.pip install pylint wheel
         pip --cache-dir=.pip install -r requirements.txt
     - name: Run Pylint
       run: pylint fractal_core.py fractal_gui.py unit_tests.py 2>&1 | tee pylint.txt
@@ -52,6 +52,7 @@ jobs:
     - name: Install requirements
       run: |
         pip --cache-dir=.pip install --upgrade pip
+        pip --cache-dir=.pip install wheel
         pip --cache-dir=.pip install -r requirements.txt
     - name: Install FOSSA
       run: |
