@@ -1,4 +1,7 @@
-import fractal_core as core
+# import os
+#
+# if "CI" in os.environ:
+#     os.environ["NUMBA_ENABLE_CUDASIM"] = "1"
 
 import unittest
 
