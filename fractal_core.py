@@ -2,13 +2,12 @@
 # for Tampere University of Technology course
 # RAK-19006 Python 3 for scientific computing
 
+import math
+import typing as tp
+
 import numba
 import numba.cuda as cuda
 import numpy as np
-
-import typing as tp
-import math
-
 
 # Constants for CUDA array creation
 block_dim = (32, 8)
@@ -197,7 +196,7 @@ def pythonize(kernel_func, has_color: bool, has_c: bool):
                 y_max: float,
                 resolution: tp.Tuple[int, int],
                 max_iter: int,
-                c: complex=None):
+                c: complex = None):
 
         if has_color:
             image = np.zeros((resolution[0], resolution[1], 3), dtype=np.uint8)
@@ -209,8 +208,7 @@ def pythonize(kernel_func, has_color: bool, has_c: bool):
         if has_c:
             if c is None:
                 raise ValueError("c value not provided")
-            else:
-                kernel_func[grid_dim, block_dim](x_min, x_max, y_min, y_max, device_image, max_iter, c)
+            kernel_func[grid_dim, block_dim](x_min, x_max, y_min, y_max, device_image, max_iter, c)
         else:
             kernel_func[grid_dim, block_dim](x_min, x_max, y_min, y_max, device_image, max_iter)
 
@@ -236,7 +234,7 @@ def carpet(size: int):
 # Utility functions
 
 @numba.jit
-def color(image: np.array, max_iter: int=0):
+def color(image: np.array, max_iter: int = 0):
     """
     Color a fractal on CPU
     :param image: 2D Numpy array

@@ -9,22 +9,21 @@
 # <unnamed> (54, 19): parse expected comma after load's type
 # NVVM_ERROR_COMPILATION
 
-import fractal_core as frac
-
-import pyqtgraph as pg
-from pyqtgraph.Qt import QtWidgets
-
-# import imageio
-import numba
-import numpy as np
-import scipy.misc
-
 import glob
 import multiprocessing as mp
 import os
 import os.path
 import subprocess
 import time
+
+# import imageio
+import numba
+import numpy as np
+import pyqtgraph as pg
+from pyqtgraph.Qt import QtWidgets
+import scipy.misc
+
+import fractal_core as frac
 
 
 # An attempt to speed up the PNG saving
@@ -36,20 +35,20 @@ import time
 save_accel = numba.jit(scipy.misc.imsave, nogil=True)
 
 
-def save_process(q: mp.JoinableQueue):
+def save_process(queue: mp.JoinableQueue):
     """
     A worker for saving PNG images
     Saving the resulting image was the slowest step in the rendering process, so it's parallelized
-    :param q:
+    :param queue:
     :return:
     """
     while True:
         start_time = time.process_time()
-        path, image = q.get()   # This call is blocking, so the while loop doesn't run on its own
+        path, image = queue.get()   # This call is blocking, so the while loop doesn't run on its own
         print("Saving", path)
         # save_accel(path, image)
         scipy.misc.imsave(path, np.flipud(image))
-        q.task_done()
+        queue.task_done()
         print("Saving time", time.process_time() - start_time)
 
 
@@ -96,7 +95,8 @@ class FractalGUI:
         win.resize(1200, 700)
 
         # Couldn't get multiprocess graphics rendering to work
-        # graphics_view = pyqtgraph.widgets.RemoteGraphicsView.RemoteGraphicsView()   # useOpenGL=True speeds the rendering
+        # graphics_view = pyqtgraph.widgets.RemoteGraphicsView.RemoteGraphicsView()
+        # useOpenGL=True speeds the rendering
         # self.__imv = pg.ImageView(view=graphics_view)
 
         self.__imv = pg.ImageView()
@@ -188,21 +188,21 @@ class FractalGUI:
         self.__input_iter = pg.SpinBox(value=self.__iter_max, int=True, dec=True, min=1)
         win2_layout.addWidget(self.__input_iter, 9, 1)
 
-        self.__renderButton = QtWidgets.QPushButton("Render")
-        win2_layout.addWidget(self.__renderButton, 10, 1)
-        self.__renderButton.clicked.connect(self.render)
+        self.__render_button = QtWidgets.QPushButton("Render")
+        win2_layout.addWidget(self.__render_button, 10, 1)
+        self.__render_button.clicked.connect(self.render)
 
-        self.__zoomButton = QtWidgets.QPushButton("Zoom")
-        win2_layout.addWidget(self.__zoomButton, 11, 1)
-        self.__zoomButton.clicked.connect(self.zoom)
+        self.__zoom_button = QtWidgets.QPushButton("Zoom")
+        win2_layout.addWidget(self.__zoom_button, 11, 1)
+        self.__zoom_button.clicked.connect(self.zoom)
 
-        self.__saveButton = QtWidgets.QPushButton("Save")
-        win2_layout.addWidget(self.__saveButton, 12, 1)
-        self.__saveButton.clicked.connect(self.save)
+        self.__save_button = QtWidgets.QPushButton("Save")
+        win2_layout.addWidget(self.__save_button, 12, 1)
+        self.__save_button.clicked.connect(self.save)
 
-        self.__resetButton = QtWidgets.QPushButton("Reset")
-        win2_layout.addWidget(self.__resetButton, 13, 1)
-        self.__resetButton.clicked.connect(self.reset)
+        self.__reset_button = QtWidgets.QPushButton("Reset")
+        win2_layout.addWidget(self.__reset_button, 13, 1)
+        self.__reset_button.clicked.connect(self.reset)
 
         frame_label = QtWidgets.QLabel()
         frame_label.setText("frames")
@@ -218,24 +218,24 @@ class FractalGUI:
         self.__input_fps = pg.SpinBox(value=FractalGUI.def_fps, dec=True, int=True, minStep=1, step=1, min=1)
         win2_layout.addWidget(self.__input_fps, 1, 3)
 
-        self.__startButton = QtWidgets.QPushButton("Set start frame")
-        self.__endButton = QtWidgets.QPushButton("Set end frame")
-        win2_layout.addWidget(self.__startButton, 2, 2)
-        win2_layout.addWidget(self.__endButton, 2, 3)
-        self.__startButton.clicked.connect(self.set_start)
-        self.__endButton.clicked.connect(self.set_end)
+        self.__start_button = QtWidgets.QPushButton("Set start frame")
+        self.__end_button = QtWidgets.QPushButton("Set end frame")
+        win2_layout.addWidget(self.__start_button, 2, 2)
+        win2_layout.addWidget(self.__end_button, 2, 3)
+        self.__start_button.clicked.connect(self.set_start)
+        self.__end_button.clicked.connect(self.set_end)
 
-        self.__animeButton = QtWidgets.QPushButton("Render animation")
-        self.__animeButton.clicked.connect(self.animate)
-        win2_layout.addWidget(self.__animeButton, 3, 2)
+        self.__anime_button = QtWidgets.QPushButton("Render animation")
+        self.__anime_button.clicked.connect(self.animate)
+        win2_layout.addWidget(self.__anime_button, 3, 2)
 
         # self.__testButton = QtWidgets.QPushButton("Test")
         # self.__testButton.clicked.connect(self.test)
         # win2_layout.addWidget(self.__testButton, 3, 3)
 
-        self.__renderLabel = QtWidgets.QLabel()
-        self.__renderLabel.setText("")
-        win2_layout.addWidget(self.__renderLabel, 4, 2)
+        self.__render_label = QtWidgets.QLabel()
+        self.__render_label.setText("")
+        win2_layout.addWidget(self.__render_label, 4, 2)
 
         win.show()
         win2.show()
@@ -376,7 +376,7 @@ class FractalGUI:
         :return: -
         """
         start_time = time.process_time()
-        if type(filename) is not str:
+        if not isinstance(filename, str):
             save_accel(os.path.join(FractalGUI.def_path, "test.png"), np.flipud(self.__image))
         else:
             save_accel(os.path.join(FractalGUI.def_path, filename) + ".png", np.flipud(self.__image))
@@ -421,7 +421,7 @@ class FractalGUI:
         self.__start_c_real = self.__c_real
         self.__start_c_imag = self.__c_imag
         self.__start_iter_max = self.__iter_max
-    
+
     def set_end(self):
         """
         Set parameters for the last frame of the animation
@@ -505,7 +505,7 @@ class FractalGUI:
             "-i",
             os.path.join(FractalGUI.def_path, "frame_*.png"),
             os.path.join(FractalGUI.def_path, "out.mp4")
-             ])
+             ], check=True)
         self.print("Ready")
 
         total_time = time.process_time() - start_time
@@ -516,7 +516,7 @@ class FractalGUI:
     #     print(self.__imv.getView().viewRect())
 
     def print(self, text: str):
-        self.__renderLabel.setText(text)
+        self.__render_label.setText(text)
         print(text)
 
 
