@@ -212,8 +212,7 @@ def pythonize(kernel_func, has_color: bool, has_c: bool):
         else:
             kernel_func[grid_dim, block_dim](x_min, x_max, y_min, y_max, device_image, max_iter)
 
-        device_image.to_host()
-        return image
+        return device_image.copy_to_host()
     return compute
 
 
