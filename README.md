@@ -9,5 +9,8 @@ course
 
 Mika Mäki, 2018
 
+![viewer](./screenshots/view.png)
+![controls](./screenshots/controls.png)
+
 ## Licensing
 [![FOSSA Status](https://app.fossa.com/api/projects/custom%2B5825%2Fgit%40github.com%3AAgenttiX%2Ffractal-zoomer.git.svg?type=large)](https://app.fossa.com/projects/custom%2B5825%2Fgit%40github.com%3AAgenttiX%2Ffractal-zoomer.git?ref=badge_large)
