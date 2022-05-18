@@ -45,8 +45,8 @@ def save_process(queue: mp.JoinableQueue):
         start_time = time.process_time()
         path, image = queue.get()   # This call is blocking, so the while loop doesn't run on its own
         print("Saving", path)
-        # save_accel(path, image)
-        scipy.misc.imsave(path, np.flipud(image))
+        save_accel(path, image)
+        # scipy.misc.imsave(path, np.flipud(image))
         queue.task_done()
         print("Saving time", time.process_time() - start_time)
 
@@ -244,9 +244,9 @@ class FractalGUI:
         # Note: PyQtGraph is prone to crashing on exit
         # (mysterious segfaults etc., especially when used along with other libraries)
         # This is not caused by improper usage but bugs in the library itself
-        #  Please see this for documentation:
+        # Please see this for documentation:
         # http://www.pyqtgraph.org/documentation/functions.html#pyqtgraph.exit
-        app.exec_()
+        app.exec()
 
         # This can prevent some of the errors
         # pg.exit()
@@ -466,7 +466,7 @@ class FractalGUI:
         y_max = np.linspace(self.__start_y_max, self.__end_y_max, frames)
         c_real = np.linspace(self.__start_c_real, self.__end_c_real, frames)
         c_imag = np.linspace(self.__start_c_imag, self.__end_c_imag, frames)
-        iter_max = np.linspace(self.__start_iter_max, self.__end_iter_max, frames, dtype=np.int)
+        iter_max = np.linspace(self.__start_iter_max, self.__end_iter_max, frames, dtype=np.int_)
 
         regex = glob.glob(os.path.join(FractalGUI.def_path, "frame") + "*.png")
         for file in regex:
